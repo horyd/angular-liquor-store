@@ -1,0 +1,14 @@
+.header {
+	height:80px;
+	font-size:24px;
+	background-color:#eee;
+	padding-top:20px
+}
+
+.center {
+	text-align: center;
+}
+
+.right {
+	text-align: right;
+};
