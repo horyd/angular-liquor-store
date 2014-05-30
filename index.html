@@ -56,14 +56,12 @@
 
 			});
 
-			myApp.controller('MainCtrl', function ($scope) {
-				$scope.cart = [];
-				$scope.costOfCart = function () {
-					return $scope.cart.reduceRight(function (a, b) {return a + b.price;},0);
-				}
+			myApp.controller('MainCtrl', function ($scope, cartFactory) {
+				$scope.cart = cartFactory.cart;
+				$scope.costOfCart = cartFactory.costOfCart;
 			})
 
-			myApp.controller('BeerCtrl', function ($scope) {
+			myApp.controller('BeerCtrl', function ($scope, cartFactory) {
 				$scope.header = 'Beer';
 				
 				$scope.items = [
@@ -81,12 +79,32 @@
 					}
 				];
 
-				$scope.addToCart = function (item) {
-					$scope.cart.push(item);
-				}
+				$scope.addToCart = cartFactory.addToCart;
 			});
 
-			myApp.controller('WineCtrl', function ($scope) {
+			myApp.factory('cartFactory', function() {
+
+				var cart = {};
+
+				cart.cart = [];
+
+				cart.addToCart = function (item) {
+					cart.cart.push(item);
+				}
+
+				cart.removeFromCart = function (index) {
+					cart.cart.splice(index,1);
+				}
+
+				cart.costOfCart = function () {
+					return cart.cart.reduceRight(function (a, b) {return a + b.price;},0);
+				}
+
+				return cart;
+
+			});
+
+			myApp.controller('WineCtrl', function ($scope,cartFactory) {
 				$scope.header = 'Wine';
 				
 				$scope.items = [
@@ -104,17 +122,13 @@
 					}
 				];
 
-				$scope.addToCart = function (item) {
-					$scope.cart.push(item);
-				}
+				$scope.addToCart = cartFactory.addToCart;
 			});
 
-			myApp.controller('CartCtrl', function ($scope) {
+			myApp.controller('CartCtrl', function ($scope,cartFactory) {
 				$scope.header = 'Cart';
 
-				$scope.removeFromCart = function (index) {
-					$scope.cart.splice(index,1);
-				}
+				$scope.removeFromCart = cartFactory.removeFromCart;
 			});
 
 		</script>
