@@ -1,0 +1,15 @@
+<div class="container">
+	<div class="row header">
+		<div class="center col-lg-4 col-md-4">
+			<a ui-sref="main.beer">BEER</a>
+		</div>
+		<div class="center col-lg-4 col-md-4">
+			<a ui-sref="main.wine">WINE</a>
+		</div>
+		<div class="center col-lg-4 col-md-4">
+			<a ui-sref="main.cart">CART</a>
+			<span>${{costOfCart()}}</span>
+		</div>
+	</div>
+	<div ui-view="content"></div>
+</div>

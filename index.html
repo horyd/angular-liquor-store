@@ -6,20 +6,7 @@
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	</head>
 	<body>
-		<div class="container">
-			<div class="row header">
-				<div class="center col-lg-4 col-md-4">
-					<a ui-sref="beer">BEER</a>
-				</div>
-				<div class="center col-lg-4 col-md-4">
-					<a ui-sref="wine">WINE</a>
-				</div>
-				<div class="center col-lg-4 col-md-4">
-					<a ui-sref="cart">CART</a>
-				</div>
-			</div>
-			<div ui-view="main"></div>
-		</div>
+		<div ui-view="main"></div>
 		<script>
 			var myApp = angular.module('myApp', ['ui.router']);
 			
@@ -30,28 +17,37 @@
 				$urlRouterProvider.otherwise('/beer');
 
 				$stateProvider
-				.state('beer', {
-					url: '/beer',
+				.state('main', {
+					abstract: true,
 					views: {
 						'main': {
+							templateUrl: 'main.html',
+							controller: 'MainCtrl'
+						}
+					}
+				})
+				.state('main.beer', {
+					url: '/beer',
+					views: {
+						'content': {
 							templateUrl: 'items.html',
 							controller: 'BeerCtrl'
 						}
 					}
 				})
-				.state('wine', {
+				.state('main.wine', {
 					url: '/wine',
 					views: {
-						'main': {
+						'content': {
 							templateUrl: 'items.html',
 							controller: 'WineCtrl'
 						}
 					}
 				})
-				.state('cart', {
+				.state('main.cart', {
 					url: '/cart',
 					views: {
-						'main': {
+						'content': {
 							templateUrl: 'cart.html',
 							controller: 'CartCtrl'
 						}
@@ -60,9 +56,16 @@
 
 			});
 
-			myApp.controller('BeerCtrl', function ($scope, $rootScope) {
+			myApp.controller('MainCtrl', function ($scope) {
+				$scope.cart = [];
+				$scope.costOfCart = function () {
+					return $scope.cart.reduceRight(function (a, b) {return a + b.price;},0);
+				}
+			})
+
+			myApp.controller('BeerCtrl', function ($scope) {
 				$scope.header = 'Beer';
-				if (!$rootScope.cart) $rootScope.cart = [];
+				
 				$scope.items = [
 					{
 						name: 'James Squire One Fifty Lashes Pale Ale',
@@ -79,13 +82,13 @@
 				];
 
 				$scope.addToCart = function (item) {
-					$rootScope.cart.push(item);
+					$scope.cart.push(item);
 				}
 			});
 
-			myApp.controller('WineCtrl', function ($scope, $rootScope) {
+			myApp.controller('WineCtrl', function ($scope) {
 				$scope.header = 'Wine';
-				if (!$rootScope.cart) $rootScope.cart = [];
+				
 				$scope.items = [
 					{
 						name: 'Penfolds Grange',
@@ -102,17 +105,15 @@
 				];
 
 				$scope.addToCart = function (item) {
-					$rootScope.cart.push(item);
+					$scope.cart.push(item);
 				}
 			});
 
-			myApp.controller('CartCtrl', function ($scope, $rootScope) {
+			myApp.controller('CartCtrl', function ($scope) {
 				$scope.header = 'Cart';
-				if (!$rootScope.cart) $rootScope.cart = [];
-				$scope.items = $rootScope.cart;
 
 				$scope.removeFromCart = function (index) {
-					$rootScope.cart.splice(index,1);
+					$scope.cart.splice(index,1);
 				}
 			});
 
