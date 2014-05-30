@@ -56,9 +56,18 @@
 
 			});
 
-			myApp.controller('MainCtrl', function ($scope, cartFactory) {
+			myApp.controller('MainCtrl', function ($scope, cartFactory, $timeout) {
 				$scope.cart = cartFactory.cart;
 				$scope.costOfCart = cartFactory.costOfCart;
+				$scope.cartStyle = {};
+				$scope.$on('itemAdded',function (event) {
+					$scope.cartStyle = {
+						color: "red"
+					};
+					$timeout(function () {
+						$scope.cartStyle = {};
+					},360);
+				})
 			})
 
 			myApp.controller('BeerCtrl', function ($scope, cartFactory) {
@@ -79,7 +88,10 @@
 					}
 				];
 
-				$scope.addToCart = cartFactory.addToCart;
+				$scope.addToCart = function (item) {
+					cartFactory.addToCart(item);
+					$scope.$emit('itemAdded');
+				}
 			});
 
 			myApp.factory('cartFactory', function() {

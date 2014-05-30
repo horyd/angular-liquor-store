@@ -4,7 +4,8 @@
   "description": "AngularJS Class taught by Jaryd Carolin",
   "main": "app.js",
   "dependencies": {
-    "express": "~3.4.7"
+    "express": "~3.4.7",
+    "mongoose":">0.0.0"
   },
   "devDependencies": {},
   "scripts": {
