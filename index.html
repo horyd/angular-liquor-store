@@ -1,4 +1,4 @@
-<html>
+<html ng-app="myApp">
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.8/angular.min.js"></script>
 		<script src="angular-ui-router.js"></script>
@@ -8,52 +8,114 @@
 	<body>
 		<div class="container">
 			<div class="row header">
-				<div class="center col-lg-4 col-md-4">BEER</div>
-				<div class="center col-lg-4 col-md-4">WINE</div>
-				<div class="center col-lg-4 col-md-4">CART</div>
-			</div>
-			<div>
-				<h1 class="center">Header</h1>
-				<div class="row">
-					<div class="col-lg-8 col-md-8">
-						Sample Name
-					</div>
-					<div class="right col-lg-4 col-md-4">
-						Price   Add to cart
-					</div>
+				<div class="center col-lg-4 col-md-4">
+					<a ui-sref="beer">BEER</a>
+				</div>
+				<div class="center col-lg-4 col-md-4">
+					<a ui-sref="wine">WINE</a>
+				</div>
+				<div class="center col-lg-4 col-md-4">
+					<a ui-sref="cart">CART</a>
 				</div>
 			</div>
+			<div ui-view="main"></div>
 		</div>
 		<script>
-			var beers = [
-				{
-					name: 'James Squire One Fifty Lashes Pale Ale',
-					price: 5.50
-				},
-				{
-					name: 'Victoria Bitter',
-					price: 4.50
-				},
-				{
-					name: 'Fat Yak',
-					price: 6.50
-				}
-			];
+			var myApp = angular.module('myApp', ['ui.router']);
+			
+			myApp.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
-			var wines = [
-				{
-					name: 'Penfolds Grange',
-					price: 11.00
-				},
-				{
-					name: 'Wolf Blass Red Label Moscato',
-					price: 7.00
-				},
-				{
-					name: 'Lindemans Bin 25 Brut Cuvee',
-					price: 8.00
+				$locationProvider.html5Mode(true);
+
+				$urlRouterProvider.otherwise('/beer');
+
+				$stateProvider
+				.state('beer', {
+					url: '/beer',
+					views: {
+						'main': {
+							templateUrl: 'items.html',
+							controller: 'BeerCtrl'
+						}
+					}
+				})
+				.state('wine', {
+					url: '/wine',
+					views: {
+						'main': {
+							templateUrl: 'items.html',
+							controller: 'WineCtrl'
+						}
+					}
+				})
+				.state('cart', {
+					url: '/cart',
+					views: {
+						'main': {
+							templateUrl: 'cart.html',
+							controller: 'CartCtrl'
+						}
+					}
+				});
+
+			});
+
+			myApp.controller('BeerCtrl', function ($scope, $rootScope) {
+				$scope.header = 'Beer';
+				if (!$rootScope.cart) $rootScope.cart = [];
+				$scope.items = [
+					{
+						name: 'James Squire One Fifty Lashes Pale Ale',
+						price: 5.50
+					},
+					{
+						name: 'Victoria Bitter',
+						price: 4.50
+					},
+					{
+						name: 'Fat Yak',
+						price: 6.50
+					}
+				];
+
+				$scope.addToCart = function (item) {
+					$rootScope.cart.push(item);
 				}
-			];
+			});
+
+			myApp.controller('WineCtrl', function ($scope, $rootScope) {
+				$scope.header = 'Wine';
+				if (!$rootScope.cart) $rootScope.cart = [];
+				$scope.items = [
+					{
+						name: 'Penfolds Grange',
+						price: 11.00
+					},
+					{
+						name: 'Wolf Blass Red Label Moscato',
+						price: 7.00
+					},
+					{
+						name: 'Lindemans Bin 25 Brut Cuvee',
+						price: 8.00
+					}
+				];
+
+				$scope.addToCart = function (item) {
+					$rootScope.cart.push(item);
+				}
+			});
+
+			myApp.controller('CartCtrl', function ($scope, $rootScope) {
+				$scope.header = 'Cart';
+				if (!$rootScope.cart) $rootScope.cart = [];
+				$scope.items = $rootScope.cart;
+
+				$scope.removeFromCart = function (index) {
+					$rootScope.cart.splice(index,1);
+				}
+			});
+
 		</script>
 	</body>
 </html>
