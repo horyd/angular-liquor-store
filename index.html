@@ -94,6 +94,32 @@
 				}
 			});
 
+			myApp.factory('itemFactory', function() {
+
+				var item = {};
+				var items = [];
+
+				item.getItems = function () {
+					return items;
+				}
+
+				return item;
+
+
+				var d = $q.defer();
+
+				obj.asyncMethod(function () {
+					if (taskSucceeds) {
+						d.resolve();
+					} else {
+						d.reject();
+					}
+				});
+
+				return d.promise;
+
+			});
+
 			myApp.factory('cartFactory', function() {
 
 				var cart = {};
