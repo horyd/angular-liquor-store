@@ -71,6 +71,10 @@
 				$scope.header = $stateParams.category || 'all';
 				$scope.items = items;
 
+				$scope.itemFilter = function (item) {
+					return ($scope.header === 'all' || item.category == $scope.header);
+				}
+
 				$scope.addToCart = function (item) {
 					cartFactory.addToCart(item);
 					$scope.$emit('itemAdded');
@@ -128,6 +132,14 @@
 
 				$scope.removeFromCart = cartFactory.removeFromCart;
 			});
+
+			myApp.filter('titleCase', function() {
+		        return function(str) {
+		            return (str == undefined || str === null) ? '' : str.replace(/_|-/, ' ').replace(/\w\S*/g, function(txt){
+		                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		            });
+		        }
+		    });
 
 		</script>
 	</body>

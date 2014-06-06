@@ -1,5 +1,5 @@
-<h1 class="center">{{header}}</h1>
-<div class="row" ng-repeat="item in items">
+<h1 class="center">{{header | titleCase}}</h1>
+<div class="row" ng-repeat="item in items | filter:itemFilter">
 	<div class="col-lg-8 col-md-8">
 		{{item.name}}
 	</div>
