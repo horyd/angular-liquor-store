@@ -24,7 +24,7 @@ app.get('/api/items', function (req,res) {
 	Item.find().exec(function (err, items){
 		res.json(items);
 	});
-})
+});
 
 app.get('*',function (req,res) {
 	res.sendfile('index.html');
