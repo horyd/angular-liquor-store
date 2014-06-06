@@ -26,6 +26,21 @@ app.get('/api/items', function (req,res) {
 	});
 });
 
+app.post('/api/items', function (req,res) {
+	Item.create(req.body.item, function (err, item) {
+		if (err) {console.log(err), res.send(500)};
+		res.json(item);
+	})
+});
+
+app.put('/api/items/:id', function (req,res) {
+	delete req.body.item._id
+	Item.findByIdAndUpdate(req.params.id, req.body.item, function (err, item) {
+		if (err) {console.log(err), res.send(500)};
+		res.json(item);
+	})
+});
+
 app.get('*',function (req,res) {
 	res.sendfile('index.html');
 });

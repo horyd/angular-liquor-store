@@ -66,19 +66,24 @@
 				})
 			})
 
-			myApp.controller('ItemsCtrl', function ($scope, cartFactory, items, $stateParams) {
+			myApp.controller('ItemsCtrl', function ($scope, cartFactory, items, $stateParams, itemFactory) {
 
 				$scope.header = $stateParams.category || 'all';
 				$scope.items = items;
-				$scope.item = {};
+				$scope.item = {category: $stateParams.category};
 
 				$scope.itemFilter = function (item) {
 					return ($scope.header === 'all' || item.category == $scope.header);
 				}
 
 				$scope.itemFormSubmitted = function () {
-					console.log($scope.item);
-					//itemFactory.submitItem($scope.itemInForm);
+					itemFactory.submitItem($scope.item).then(function () {
+						$scope.item = {};
+					});
+				}
+
+				$scope.editItem = function (item) {
+					$scope.item = item;
 				}
 
 				$scope.addToCart = function (item) {
@@ -90,6 +95,32 @@
 			myApp.factory('itemFactory', function ($http, $q) {
 				var returnObject = {};
 				var items = [];
+
+				returnObject.submitItem = function (item) {
+					var promise;
+					if (item._id) {
+						promise = $http({
+							method: 'PUT',
+							url: '/api/items/' + item._id,
+							data: {item: item}
+						});
+						promise.then(function (data) {
+							for (var i=0;i<items.length;i++) {
+								if (items[i]._id == data.data._id) items[i] = data.data;
+							}
+						});
+					} else {
+						promise = $http({
+							method: 'POST',
+							url: '/api/items',
+							data: {item: item}
+						});
+						promise.then(function (data) {
+							items.push(data.data);
+						});
+					}
+					return promise;
+				}
 
 				returnObject.getItems = function () {
 					if (items.length) return items;
@@ -104,7 +135,6 @@
 					}, function (data) { //error
 						defer.reject();
 					});
-
 					return defer.promise;
 				}
 
