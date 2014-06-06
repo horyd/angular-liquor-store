@@ -33,6 +33,11 @@
 							templateUrl: 'items.html',
 							controller: 'BeerCtrl'
 						}
+					},
+					resolve: {
+						items: function (itemFactory) {
+							return itemFactory.getItems();
+						}
 					}
 				})
 				.state('main.wine', {
@@ -41,6 +46,11 @@
 						'content': {
 							templateUrl: 'items.html',
 							controller: 'WineCtrl'
+						}
+					},
+					resolve: {
+						items: function (itemFactory) {
+							return itemFactory.getItems();
 						}
 					}
 				})
@@ -70,10 +80,10 @@
 				})
 			})
 
-			myApp.controller('BeerCtrl', function ($scope, cartFactory, itemFactory) {
+			myApp.controller('BeerCtrl', function ($scope, cartFactory, items) {
 				$scope.header = 'Beer';
-				
-				$scope.items = itemFactory.getItems();
+
+				$scope.items = items;
 
 				$scope.addToCart = function (item) {
 					cartFactory.addToCart(item);
@@ -81,19 +91,36 @@
 				}
 			});
 
-			myApp.factory('itemFactory', function ($http) {
+			myApp.controller('WineCtrl', function ($scope,cartFactory,items) {
+				$scope.header = 'Wine';
+				
+				$scope.items = items;
+
+				$scope.addToCart = function (item) {
+					cartFactory.addToCart(item);
+					$scope.$emit('itemAdded');
+				}
+			});
+
+			myApp.factory('itemFactory', function ($http, $q) {
 				var returnObject = {};
 				var items = [];
 
-				$http({
-					method:'GET',
-					url: '/api/items'
-				}).then(function(data){
-					items = data.data;
-				});
-
 				returnObject.getItems = function () {
-					return items;
+					if (items.length) return items;
+					var defer = $q.defer();
+
+					$http({
+						method:'GET',
+						url: '/api/items'
+					}).then(function (data) {
+						items = data.data
+						defer.resolve(items);
+					}, function (data) {
+						defer.reject();
+					});
+
+					return defer.promise;
 				}
 
 				return returnObject;
@@ -119,14 +146,6 @@
 
 				return cart;
 
-			});
-
-			myApp.controller('WineCtrl', function ($scope,cartFactory,itemFactory) {
-				$scope.header = 'Wine';
-				
-				$scope.items = itemFactory.getItems();
-
-				$scope.addToCart = cartFactory.addToCart;
 			});
 
 			myApp.controller('CartCtrl', function ($scope,cartFactory) {
