@@ -79,11 +79,18 @@
 				$scope.itemFormSubmitted = function () {
 					itemFactory.submitItem($scope.item).then(function () {
 						$scope.item = {};
+						alert('Item changes made successfully.')
 					});
 				}
 
 				$scope.editItem = function (item) {
 					$scope.item = item;
+				}
+
+				$scope.removeItem = function (id) {
+					itemFactory.removeItem(id).then(function() {
+						alert('Item with ' + id + ' removed successfully.');
+					});
 				}
 
 				$scope.addToCart = function (item) {
@@ -95,6 +102,19 @@
 			myApp.factory('itemFactory', function ($http, $q) {
 				var returnObject = {};
 				var items = [];
+
+				returnObject.removeItem = function (id) {
+					var promise = $http({
+						method:'DELETE',
+						url: '/api/items/' + id
+					});
+					promise.then(function () {
+						for (var i=0;i<items.length;i++) {
+							if (items[i]._id == id) items.splice(i,1);
+						}
+					});
+					return promise;
+				}
 
 				returnObject.submitItem = function (item) {
 					var promise;

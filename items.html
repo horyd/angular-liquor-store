@@ -7,10 +7,11 @@
 		{{item.price}}
 		<a ng-click="addToCart(item)">Add to cart</a>
 		<a ng-click="editItem(item)">Edit item</a>
+		<a ng-click="removeItem(item._id)">Remove item</a>
 	</div>
 </div>
 <form ng-submit="itemFormSubmitted()">
-	Name: <input ng-model="item.name" />
-	Price: <input ng-model="item.price" />
+	Name: <input ng-model="item.name" required/><br>
+	Price: <input ng-model="item.price" required/>
 	<input type="submit" value="Submit" />
 </form>
