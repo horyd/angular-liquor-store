@@ -8,3 +8,8 @@
 		<a ng-click="addToCart(item)">Add to cart</a>
 	</div>
 </div>
+<form ng-submit="itemFormSubmitted()">
+	Name: <input ng-model="item.name" />
+	Price: <input ng-model="item.price" />
+	<input type="submit" value="Submit" />
+</form>

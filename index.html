@@ -70,9 +70,15 @@
 
 				$scope.header = $stateParams.category || 'all';
 				$scope.items = items;
+				$scope.item = {};
 
 				$scope.itemFilter = function (item) {
 					return ($scope.header === 'all' || item.category == $scope.header);
+				}
+
+				$scope.itemFormSubmitted = function () {
+					console.log($scope.item);
+					//itemFactory.submitItem($scope.itemInForm);
 				}
 
 				$scope.addToCart = function (item) {
