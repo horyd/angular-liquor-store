@@ -70,23 +70,10 @@
 				})
 			})
 
-			myApp.controller('BeerCtrl', function ($scope, cartFactory) {
+			myApp.controller('BeerCtrl', function ($scope, cartFactory, itemFactory) {
 				$scope.header = 'Beer';
 				
-				$scope.items = [
-					{
-						name: 'James Squire One Fifty Lashes Pale Ale',
-						price: 5.50
-					},
-					{
-						name: 'Victoria Bitter',
-						price: 4.50
-					},
-					{
-						name: 'Fat Yak',
-						price: 6.50
-					}
-				];
+				$scope.items = itemFactory.getItems();
 
 				$scope.addToCart = function (item) {
 					cartFactory.addToCart(item);
@@ -94,31 +81,23 @@
 				}
 			});
 
-			myApp.factory('itemFactory', function() {
-
-				var item = {};
+			myApp.factory('itemFactory', function ($http) {
+				var returnObject = {};
 				var items = [];
 
-				item.getItems = function () {
+				$http({
+					method:'GET',
+					url: '/api/items'
+				}).then(function(data){
+					items = data.data;
+				});
+
+				returnObject.getItems = function () {
 					return items;
 				}
 
-				return item;
-
-
-				var d = $q.defer();
-
-				obj.asyncMethod(function () {
-					if (taskSucceeds) {
-						d.resolve();
-					} else {
-						d.reject();
-					}
-				});
-
-				return d.promise;
-
-			});
+				return returnObject;
+			})
 
 			myApp.factory('cartFactory', function() {
 
@@ -142,23 +121,10 @@
 
 			});
 
-			myApp.controller('WineCtrl', function ($scope,cartFactory) {
+			myApp.controller('WineCtrl', function ($scope,cartFactory,itemFactory) {
 				$scope.header = 'Wine';
 				
-				$scope.items = [
-					{
-						name: 'Penfolds Grange',
-						price: 11.00
-					},
-					{
-						name: 'Wolf Blass Red Label Moscato',
-						price: 7.00
-					},
-					{
-						name: 'Lindemans Bin 25 Brut Cuvee',
-						price: 8.00
-					}
-				];
+				$scope.items = itemFactory.getItems();
 
 				$scope.addToCart = cartFactory.addToCart;
 			});
