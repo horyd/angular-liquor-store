@@ -14,7 +14,7 @@
 
 				$locationProvider.html5Mode(true);
 
-				$urlRouterProvider.otherwise('/beer');
+				$urlRouterProvider.otherwise('/items?category=beer');
 
 				$stateProvider
 				.state('main', {
@@ -26,26 +26,12 @@
 						}
 					}
 				})
-				.state('main.beer', {
-					url: '/beer',
+				.state('main.items', {
+					url: '/items?category',
 					views: {
 						'content': {
 							templateUrl: 'items.html',
-							controller: 'BeerCtrl'
-						}
-					},
-					resolve: {
-						items: function (itemFactory) {
-							return itemFactory.getItems();
-						}
-					}
-				})
-				.state('main.wine', {
-					url: '/wine',
-					views: {
-						'content': {
-							templateUrl: 'items.html',
-							controller: 'WineCtrl'
+							controller: 'ItemsCtrl'
 						}
 					},
 					resolve: {
@@ -80,20 +66,9 @@
 				})
 			})
 
-			myApp.controller('BeerCtrl', function ($scope, cartFactory, items) {
-				$scope.header = 'Beer';
+			myApp.controller('ItemsCtrl', function ($scope, cartFactory, items, $stateParams) {
 
-				$scope.items = items;
-
-				$scope.addToCart = function (item) {
-					cartFactory.addToCart(item);
-					$scope.$emit('itemAdded');
-				}
-			});
-
-			myApp.controller('WineCtrl', function ($scope,cartFactory,items) {
-				$scope.header = 'Wine';
-				
+				$scope.header = $stateParams.category || 'all';
 				$scope.items = items;
 
 				$scope.addToCart = function (item) {
@@ -113,10 +88,10 @@
 					$http({
 						method:'GET',
 						url: '/api/items'
-					}).then(function (data) {
+					}).then(function (data) { //success
 						items = data.data
 						defer.resolve(items);
-					}, function (data) {
+					}, function (data) { //error
 						defer.reject();
 					});
 
