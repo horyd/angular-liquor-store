@@ -73,6 +73,7 @@
 				};
 				$scope.items = items;
 
+
 				$scope.formSubmitted = function () {
 					if ($scope.formItem._id) {
 						itemFactory.updateItem($scope.formItem);
@@ -102,6 +103,10 @@
 					cartFactory.addToCart(item);
 					$scope.$emit('itemAdded');
 				}
+
+				$scope.cheapItem = $scope.items.filter($scope.itemInCategory).sort(function (a,b) {
+					return a.price > b.price;
+				})[0];
 			});
 
 			myApp.factory('itemFactory', function ($http, $q) {
@@ -213,6 +218,9 @@
 
 			myApp.directive('item', function () {
 				return {
+					scope: {
+						item: "=info"
+					},
 					restrict: 'E',
 					templateUrl: 'item.html'
 				}

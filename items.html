@@ -1,6 +1,10 @@
 <h1 class="center">{{header | titleCase}}</h1>
+<h2>Cheap {{header}} offering!</h2>
+<div class="row">
+	<item class="row" info="cheapItem"></item>
+</div><br><br>
 <div class="row" ng-repeat="item in items | filter:itemInCategory">
-	<item></item>
+	<item info="item"></item>
 </div>
 <form name="form" ng-submit="formSubmitted()">
 	Name: <input name="iName" type="text" required ng-model="formItem.name" />
