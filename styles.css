@@ -17,3 +17,7 @@
 	transition: 0.18s linear all;
 	-webkit-transition: 0.18s linear all;
 }
+
+.error {
+	background-color: red;
+}

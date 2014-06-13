@@ -14,7 +14,7 @@
 
 				$locationProvider.html5Mode(true);
 
-				$urlRouterProvider.otherwise('/beer');
+				$urlRouterProvider.otherwise('/items?category=beer');
 
 				$stateProvider
 				.state('main', {
@@ -26,21 +26,17 @@
 						}
 					}
 				})
-				.state('main.beer', {
-					url: '/beer',
+				.state('main.items', {
+					url: '/items?category',
 					views: {
 						'content': {
 							templateUrl: 'items.html',
-							controller: 'BeerCtrl'
+							controller: 'ItemsCtrl'
 						}
-					}
-				})
-				.state('main.wine', {
-					url: '/wine',
-					views: {
-						'content': {
-							templateUrl: 'items.html',
-							controller: 'WineCtrl'
+					},
+					resolve: {
+						items: function (itemFactory) {
+							return itemFactory.getItems();
 						}
 					}
 				})
@@ -70,10 +66,37 @@
 				})
 			})
 
-			myApp.controller('BeerCtrl', function ($scope, cartFactory, itemFactory) {
-				$scope.header = 'Beer';
-				
-				$scope.items = itemFactory.getItems();
+			myApp.controller('ItemsCtrl', function ($scope, cartFactory, itemFactory, items, $stateParams) {
+				$scope.header = $stateParams.category || 'all';
+				$scope.formItem = {
+					category: $stateParams.category
+				};
+				$scope.items = items;
+
+				$scope.formSubmitted = function () {
+					if ($scope.formItem._id) {
+						itemFactory.updateItem($scope.formItem);
+					} else {
+						itemFactory.createItem($scope.formItem).then(function () {
+							$scope.notification = 'New item successfully added!';
+							$scope.formItem = {
+								category: $stateParams.category
+							};
+						});
+					}
+				}
+
+				$scope.deleteItem = function (id) {
+					itemFactory.deleteItem(id);
+				}
+
+				$scope.editItem = function (item) {
+					$scope.formItem = item;
+				}
+
+				$scope.itemInCategory = function (item) {
+					return (!$stateParams.category || (item.category == $stateParams.category));
+				}
 
 				$scope.addToCart = function (item) {
 					cartFactory.addToCart(item);
@@ -81,23 +104,84 @@
 				}
 			});
 
-			myApp.factory('itemFactory', function ($http) {
+			myApp.factory('itemFactory', function ($http, $q) {
 				var returnObject = {};
 				var items = [];
 
-				$http({
-					method:'GET',
-					url: '/api/items'
-				}).then(function(data){
-					items = data.data;
-				});
+				returnObject.deleteItem = function (id) {
+					$http({
+						method: 'DELETE',
+						url: '/api/items/' + id
+					}).then(function(data) {
+						for (var i=0; i< items.length;i++) {
+							if (items[i]._id == id) items.splice(i,1);
+						}
+						alert('Item deleted!');
+					})
+				}
+
+				returnObject.updateItem = function (item) {
+					$http({
+						method: 'PUT',
+						url: '/api/items/' + item._id,
+						data: {
+							item: item
+						}
+					}).then(function (data) {
+						item = data.data;
+						// for (var i=0;i<items.length;i++) {
+						// 	if (items[i]._id == data.data._id)	items[i] = data.data;
+						// }
+					})
+				}
+
+				returnObject.createItem = function (item) {
+					var promise = $http({
+						method: 'POST',
+						url: '/api/items',
+						data: {
+							item: item
+						}
+					});
+
+					promise.then(function (data) {
+						items.push(data.data);
+					});
+
+					return promise;
+				}
 
 				returnObject.getItems = function () {
-					return items;
+
+					if (items.length) return items;
+
+					var defer = $q.defer();
+
+					$http({
+						method:'GET',
+						url: '/api/items'
+					}).then(function (data) { //success
+						console.log(data);
+
+						items = data.data;
+						defer.resolve(data.data);
+					}, function () { //error
+						defer.reject();
+					});
+
+					return defer.promise;
 				}
 
 				return returnObject;
 			})
+
+			myApp.filter('titleCase', function() {
+				return function(str) {
+					return (str == undefined || str === null) ? '' : str.replace(/_|-/, ' ').replace(/\w\S*/g, function(txt){
+						return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+		    		});
+		    	}
+		    });
 
 			myApp.factory('cartFactory', function() {
 
@@ -119,14 +203,6 @@
 
 				return cart;
 
-			});
-
-			myApp.controller('WineCtrl', function ($scope,cartFactory,itemFactory) {
-				$scope.header = 'Wine';
-				
-				$scope.items = itemFactory.getItems();
-
-				$scope.addToCart = cartFactory.addToCart;
 			});
 
 			myApp.controller('CartCtrl', function ($scope,cartFactory) {
