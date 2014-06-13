@@ -211,6 +211,13 @@
 				$scope.removeFromCart = cartFactory.removeFromCart;
 			});
 
+			myApp.directive('item', function () {
+				return {
+					restrict: 'E',
+					templateUrl: 'item.html'
+				}
+			})
+
 		</script>
 	</body>
 </html>

@@ -1,14 +1,6 @@
 <h1 class="center">{{header | titleCase}}</h1>
 <div class="row" ng-repeat="item in items | filter:itemInCategory">
-	<div class="col-lg-8 col-md-8">
-		{{item.name}}
-	</div>
-	<div class="right col-lg-4 col-md-4">
-		{{item.price}}
-		<a ng-click="addToCart(item)">Add to cart</a>
-		<a ng-click="editItem(item)">Edit item</a>
-		<a ng-click="deleteItem(item._id)">Delete item</a>
-	</div>
+	<item></item>
 </div>
 <form name="form" ng-submit="formSubmitted()">
 	Name: <input name="iName" type="text" required ng-model="formItem.name" />
