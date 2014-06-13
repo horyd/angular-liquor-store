@@ -225,7 +225,14 @@
 						addToCart: "&"
 					},
 					restrict: 'E',
-					templateUrl: 'item.html'
+					templateUrl: 'item.html',
+					link: function (scope, element, attrs) {
+						if(scope.special) {
+							scope.itemTitle = '***BONUS*** ' + scope.item.name + ' ***BONUS***';
+						} else {
+							scope.itemTitle = scope.item.name
+						}
+					}
 				}
 			})
 
