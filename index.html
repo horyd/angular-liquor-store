@@ -100,6 +100,7 @@
 				}
 
 				$scope.addToCart = function (item) {
+					console.log('hello');
 					cartFactory.addToCart(item);
 					$scope.$emit('itemAdded');
 				}
@@ -220,7 +221,8 @@
 				return {
 					scope: {
 						item: "=info",
-						special: "@"
+						special: "@",
+						addToCart: "&"
 					},
 					restrict: 'E',
 					templateUrl: 'item.html'
