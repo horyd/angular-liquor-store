@@ -219,7 +219,8 @@
 			myApp.directive('item', function () {
 				return {
 					scope: {
-						item: "=info"
+						item: "=info",
+						special: "@"
 					},
 					restrict: 'E',
 					templateUrl: 'item.html'

@@ -21,3 +21,8 @@
 .error {
 	background-color: red;
 }
+
+.special {
+	color:red;
+	font-weight: bold;
+}
