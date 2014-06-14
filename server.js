@@ -15,8 +15,8 @@ var Item = mongoose.model('items',itemSchema);
 
 app.use(express.bodyParser());
 app.use(express.cookieParser());
-app.use(express.static(__dirname));
-app.set('views', __dirname);
+app.use(express.static(__dirname + '/public/'));
+app.set('views', __dirname + '/public/');
 app.set('view engine', 'jade');
 app.use(app.router);
 
@@ -49,7 +49,7 @@ app.delete('/api/items/:id', function (req,res) {
 });
 
 app.get('*',function (req,res) {
-	res.sendfile('index.html');
+	res.sendfile('public/index.html');
 });
 
 var port = process.env.PORT || 3000;
